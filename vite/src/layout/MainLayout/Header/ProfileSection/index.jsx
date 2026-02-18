@@ -152,7 +152,7 @@ export default function ProfileSection() {
                         '&::-webkit-scrollbar': { width: 5 }
                       }}
                     >
-                      <UpgradePlanCard />
+                      {/* <UpgradePlanCard /> */}
                       <Divider />
                       <Card sx={{ bgcolor: 'primary.light', my: 2 }}>
                         <CardContent>
@@ -193,7 +193,7 @@ export default function ProfileSection() {
                             primary={
                               <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Typography variant="body2">Social Profile</Typography>
-                                <Chip
+                                {/* <Chip
                                   slotProps={{
                                     label: { sx: { mt: 0.25 } }
                                   }}
@@ -201,7 +201,7 @@ export default function ProfileSection() {
                                   variant="filled"
                                   size="small"
                                   color="warning"
-                                />
+                                /> */}
                               </Stack>
                             }
                           />

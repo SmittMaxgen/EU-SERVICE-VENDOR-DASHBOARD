@@ -189,7 +189,7 @@ const ProfileSection = () => {
                                         }}
                                     >
                                         <Box sx={{ p: 2 }}>
-                                            <UpgradePlanCard />
+                                            {/* <UpgradePlanCard /> */}
                                             <Divider />
                                             <Card
                                                 sx={{
@@ -279,14 +279,14 @@ const ProfileSection = () => {
                                                                     <Typography variant="body2">Social Profile</Typography>
                                                                 </Grid>
                                                                 <Grid item>
-                                                                    <Chip
+                                                                    {/* <Chip
                                                                         label="02"
                                                                         size="small"
                                                                         sx={{
                                                                             bgcolor: theme.palette.warning.dark,
                                                                             color: theme.palette.background.default
                                                                         }}
-                                                                    />
+                                                                    /> */}
                                                                 </Grid>
                                                             </Grid>
                                                         }
