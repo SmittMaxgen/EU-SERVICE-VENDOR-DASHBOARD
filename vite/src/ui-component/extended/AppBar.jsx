@@ -71,9 +71,9 @@ export default function AppBar({ ...others }) {
               <Button color="inherit" component={RouterLink} to="/login" target="_blank">
                 Dashboard
               </Button>
-              <Button color="inherit" component={Link} href="https://codedthemes.gitbook.io/berry" target="_blank">
+              {/* <Button color="inherit" component={Link} href="https://codedthemes.gitbook.io/berry" target="_blank">
                 Documentation
-              </Button>
+              </Button> */}
               <Button component={Link} href="https://links.codedthemes.com/hsqll" disableElevation variant="contained" color="secondary">
                 Purchase Now
               </Button>
