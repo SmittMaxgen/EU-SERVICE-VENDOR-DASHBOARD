@@ -92,22 +92,24 @@ export default function SubCategoryPage() {
             <Table>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell sx={{ fontWeight: 700 }}>#</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Sr</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Subcategory Name</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Base Price</TableCell>
+                  {/* <TableCell sx={{ fontWeight: 700 }}>Base Price</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Duration</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>VAT %</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Status</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {subcategoryServices.map((service) => (
-                  <TableRow key={service.id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate('/services')}>
+                  <TableRow key={service.id} hover sx={{ cursor: 'pointer' }} 
+                  // onClick={() => navigate('/services')}
+                  >
                     {console.log('service:::', service)}
                     <TableCell>{service.id}</TableCell>
                     <TableCell>
                       <Typography fontWeight={600}>{service?.subcategory?.name}</Typography>
-                      {service.description && (
+                      {/* {service.description && (
                         <Typography
                           variant="caption"
                           color="text.secondary"
@@ -120,16 +122,16 @@ export default function SubCategoryPage() {
                         >
                           {service.description}
                         </Typography>
-                      )}
+                      )} */}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <Typography fontWeight={700} color="primary">
                         ₹{service.base_price}
                       </Typography>
                     </TableCell>
                     <TableCell>{service.duration_minutes} min</TableCell>
-                    <TableCell>{service.vat_percentage}%</TableCell>
-                    <TableCell>
+                    <TableCell>{service.vat_percentage}%</TableCell> */}
+                    {/* <TableCell>
                       <Chip
                         label={service.is_active ? 'Active' : 'Inactive'}
                         size="small"
@@ -140,7 +142,7 @@ export default function SubCategoryPage() {
                           fontSize: '0.7rem'
                         }}
                       />
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>
