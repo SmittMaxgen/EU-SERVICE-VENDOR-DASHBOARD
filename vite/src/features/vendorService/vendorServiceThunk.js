@@ -44,7 +44,11 @@ export const createVendorService = createAsyncThunk('vendorService/create', asyn
 // ─── Update Vendor Service ────────────────────────────────────────────────────
 export const updateVendorService = createAsyncThunk('vendorService/update', async ({ id, data }, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.patch(`/vendor-services/${id}/`, data);
+    const response = await axiosInstance.patch(`/vendor-services/${id}/`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data' // ✅ override axios default
+      }
+    });
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response?.data || error.message);

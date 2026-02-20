@@ -210,7 +210,7 @@ export default function VendorServicesPage() {
         <DialogTitle>{isEditing ? 'Edit Vendor Service' : 'Add Vendor Service'}</DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2} sx={{ pt: 1 }}>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <TextField
                 label="Vendor ID *"
                 fullWidth
@@ -219,7 +219,7 @@ export default function VendorServicesPage() {
                 onChange={(e) => setForm({ ...form, vendor: e.target.value })}
                 helperText="Enter the vendor's ID"
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <TextField
                 label="Service ID *"
