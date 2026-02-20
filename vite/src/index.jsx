@@ -1,5 +1,8 @@
 import { createRoot } from 'react-dom/client';
 
+import Store from './app/store.js';
+import { Provider } from 'react-redux';
+
 // project imports
 import App from 'App';
 import * as serviceWorker from 'serviceWorker';
@@ -31,7 +34,9 @@ const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(
   <ConfigProvider>
-    <App />
+    <Provider store={Store}>
+      <App />
+    </Provider>
   </ConfigProvider>
 );
 

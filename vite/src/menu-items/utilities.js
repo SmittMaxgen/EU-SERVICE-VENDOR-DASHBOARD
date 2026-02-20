@@ -25,6 +25,14 @@ const utilities = {
       breadcrumbs: false
     },
     {
+      id: 'vendor-services',
+      title: 'Vendor Serives',
+      type: 'item',
+      url: '/vendor-services',
+      icon: icons.IconTypography,
+      breadcrumbs: false
+    },
+    {
       id: 'util-color',
       title: 'Color',
       type: 'item',

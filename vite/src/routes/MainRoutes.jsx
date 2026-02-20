@@ -15,7 +15,10 @@ const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
-// ==============================|| MAIN ROUTING ||============================== //
+// ✅ your new pages
+const ServicesPage = Loadable(lazy(() => import('../page/servicePage')));
+const VendorServicesPage = Loadable(lazy(() => import('../page/vendorServicePage')));
+const SubCategoryPage = Loadable(lazy(() => import('../page/SubCategoriesPage')));
 
 const MainRoutes = {
   path: '/',
@@ -34,6 +37,29 @@ const MainRoutes = {
         }
       ]
     },
+
+    // ✅ Services routes
+    {
+      path: 'services',
+      children: [
+        {
+          path: '', // /services
+          element: <ServicesPage />
+        }
+      ]
+    },
+
+    // ✅ Vendor Services routes
+    {
+      path: 'vendor-services',
+      children: [
+        {
+          path: '', // /vendor-services
+          element: <VendorServicesPage />
+        }
+      ]
+    },
+
     {
       path: 'typography',
       element: <UtilsTypography />
@@ -49,6 +75,18 @@ const MainRoutes = {
     {
       path: '/sample-page',
       element: <SamplePage />
+    },
+    {
+      path: '/vendor-services',
+      element: <VendorServicesPage />
+    },
+    {
+      path: '/services',
+      element: <ServicesPage />
+    },
+    {
+      path: 'subcategory/:id', // /subcategory/1
+      element: <SubCategoryPage />
     }
   ]
 };
