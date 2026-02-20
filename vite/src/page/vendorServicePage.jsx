@@ -220,7 +220,7 @@ export default function VendorServicesPage() {
                 helperText="Enter the vendor's ID"
               />
             </Grid> */}
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <TextField
                 label="Service ID *"
                 fullWidth
@@ -229,7 +229,7 @@ export default function VendorServicesPage() {
                 onChange={(e) => setForm({ ...form, service: e.target.value })}
                 helperText="Enter the service's ID"
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <TextField
                 label="Custom Price (₹)"
