@@ -10,7 +10,7 @@ const icons = {
 
 const pages = {
   id: 'pages',
-  title: 'Pages',
+  title: '',
   caption: 'Pages Caption',
   icon: icons.IconKey,
   type: 'group',
