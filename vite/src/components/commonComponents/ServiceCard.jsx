@@ -47,7 +47,7 @@ const ServiceCardSkeleton = () => (
 //   onEdit      — called with service object when Edit is clicked
 //   onDelete    — called with service.id when Delete is clicked
 // ─────────────────────────────────────────────────────────────────────────────
-export default function ServiceCard({ service, isLoading, onClick, onEdit, onDelete }) {
+export default function ServiceCard({ service, isLoading, onClick, onAdd, onEdit, onDelete }) {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -61,6 +61,11 @@ export default function ServiceCard({ service, isLoading, onClick, onEdit, onDel
   const handleEdit = () => {
     handleMenuClose();
     onEdit?.(service);
+  };
+
+  const handleAdd = () => {
+    handleMenuClose();
+    onAdd?.(service);
   };
 
   const handleDelete = () => {
@@ -172,12 +177,12 @@ export default function ServiceCard({ service, isLoading, onClick, onEdit, onDel
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          <MenuItem onClick={handleEdit}>
-            <EditOutlinedIcon sx={{ mr: 1.75, fontSize: '1rem' }} /> Edit Service
+          <MenuItem onClick={handleAdd}>
+            <EditOutlinedIcon sx={{ mr: 1.75, fontSize: '1rem' }} /> Add Service
           </MenuItem>
-          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+          {/* <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
             <DeleteOutlineIcon sx={{ mr: 1.75, fontSize: '1rem' }} /> Delete Service
-          </MenuItem>
+          </MenuItem> */}
         </Menu>
 
         {/* ─── Service Name ─── */}

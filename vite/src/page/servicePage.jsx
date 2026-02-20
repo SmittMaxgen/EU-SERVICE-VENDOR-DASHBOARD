@@ -130,6 +130,12 @@ export default function ServicesPage() {
     }
   };
 
+  const handleAdd = (id) => {
+    if (window.confirm('Are you sure you want to Add this service?')) {
+      dispatch(deleteService(id));
+    }
+  };
+
   // ─── Form Submit ──────────────────────────────────────────────────────────
   const handleSubmit = () => {
     const payload = {
@@ -197,7 +203,13 @@ export default function ServicesPage() {
               ))
             : filteredServices.map((service) => (
                 <Grid key={service.id} item xs={12} sm={6} md={4}>
-                  <ServiceCard service={service} onClick={() => handleCardClick(service)} onEdit={handleOpenEdit} onDelete={handleDelete} />
+                  <ServiceCard
+                    service={service}
+                    onClick={() => handleCardClick(service)}
+                    onEdit={handleOpenEdit}
+                    onDelete={handleDelete}
+                    onAdd={handleAdd}
+                  />
                 </Grid>
               ))}
 
