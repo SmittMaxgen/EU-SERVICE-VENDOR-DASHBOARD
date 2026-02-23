@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Divider from '@mui/material/Divider';
@@ -13,11 +13,27 @@ import AuthCardWrapper from './AuthCardWrapper';
 import Logo from 'ui-component/Logo';
 import AuthFooter from 'ui-component/cards/AuthFooter';
 import AuthLogin from '../auth-forms/AuthLogin';
+import { selectAuthSuccess, selectIsAuthenticated } from '../../../features/auth/authSelectors';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 // ================================|| AUTH3 - LOGIN ||================================ //
 
 export default function Login() {
+  const navigate = useNavigate();
   const downMD = useMediaQuery((theme) => theme.breakpoints.down('md'));
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+
+  // add this selector
+  const successMessage = useSelector(selectAuthSuccess);
+
+  // ✅ Navigate on BOTH isAuthenticated and successMessage
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if ((isAuthenticated || successMessage) && token) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, successMessage, navigate]);
 
   return (
     <AuthWrapper1>
@@ -44,7 +60,13 @@ export default function Login() {
                 </Box>
                 <Divider sx={{ width: 1 }} />
                 <Stack sx={{ alignItems: 'center' }}>
-                  <Typography component={Link} to="/pages/register" variant="subtitle1" sx={{ textDecoration: 'none' }}>
+                  <Typography
+                    onClick={() => navigate('/register')}
+                    // component={Link}
+                    // to="/register"
+                    variant="subtitle1"
+                    sx={{ textDecoration: 'none' }}
+                  >
                     Don&apos;t have an account?
                   </Typography>
                 </Stack>

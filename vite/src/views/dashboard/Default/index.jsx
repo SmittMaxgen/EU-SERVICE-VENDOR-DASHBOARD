@@ -125,6 +125,13 @@ export default function Dashboard() {
     }
   };
 
+  const token = localStorage.getItem('token');
+  useEffect(() => {
+    if (!token) {
+      navigate('/login', { replace: true });
+    }
+  }, [token, navigate]);
+
   return (
     <Grid container spacing={gridSpacing}>
       <Grid size={12}>

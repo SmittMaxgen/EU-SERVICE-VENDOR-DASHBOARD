@@ -72,9 +72,7 @@ const Register = () => {
                                                 to="/pages/login/login3"
                                                 variant="subtitle1"
                                                 sx={{ textDecoration: 'none' }}
-                                            >
-                                                Already have an account?
-                                            </Typography>
+                                            ></Typography>
                                         </Grid>
                                     </Grid>
                                 </Grid>

@@ -30,11 +30,15 @@ import useConfig from 'hooks/useConfig';
 // assets
 import User1 from 'assets/images/users/user-round.svg';
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons-react';
+import { logoutVendor } from '../../../../features/auth/authThunk';
+import { forceLogout } from '../../../../features/auth/authSlice';
+import { useNavigate } from 'react-router';
 
 // ==============================|| PROFILE MENU ||============================== //
 
 export default function ProfileSection() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const {
     state: { borderRadius }
   } = useConfig();
@@ -70,6 +74,10 @@ export default function ProfileSection() {
     prevOpen.current = open;
   }, [open]);
 
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
   return (
     <>
       <Chip
@@ -210,7 +218,7 @@ export default function ProfileSection() {
                           <ListItemIcon>
                             <IconLogout stroke={1.5} size="20px" />
                           </ListItemIcon>
-                          <ListItemText primary={<Typography variant="body2">Logout</Typography>} />
+                          <ListItemText onClick={() => handleLogout()} primary={<Typography variant="body2">Logout</Typography>} />
                         </ListItemButton>
                       </List>
                     </Box>

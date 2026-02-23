@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { Activity, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import { Link, matchPath, useLocation } from 'react-router-dom';
 
 // material-ui
@@ -8,6 +9,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Avatar from '@mui/material/Avatar';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
+import Collapse from '@mui/material/Collapse';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -45,7 +47,7 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
   useEffect(() => {
     compareSize();
     window.addEventListener('resize', compareSize);
-    window.removeEventListener('resize', compareSize);
+    return () => window.removeEventListener('resize', compareSize);
   }, []);
 
   const Icon = item?.icon;
@@ -55,17 +57,15 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
     <FiberManualRecordIcon sx={{ width: isSelected ? 8 : 6, height: isSelected ? 8 : 6 }} fontSize={level > 0 ? 'inherit' : 'medium'} />
   );
 
-  let itemTarget = '_self';
-  if (item.target) {
-    itemTarget = '_blank';
-  }
+  const itemTarget = '_self';
 
+  // ✅ Blur focused element before closing drawer to fix aria-hidden warning
   const itemHandler = () => {
-    if (downMD) handlerDrawerOpen(false);
-
-    if (isParents && setSelectedID) {
-      setSelectedID();
+    if (downMD) {
+      if (document.activeElement) document.activeElement.blur();
+      handlerDrawerOpen(false);
     }
+    if (isParents && setSelectedID) setSelectedID();
   };
 
   return (
@@ -92,7 +92,7 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
           })
         }}
         selected={isSelected}
-        onClick={() => itemHandler()}
+        onClick={itemHandler}
       >
         <ButtonBase aria-label="theme-icon" sx={{ borderRadius: `${borderRadius}px` }} disableRipple={drawerOpen}>
           <ListItemIcon
@@ -158,22 +158,23 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
           </Tooltip>
         )}
 
-        <Activity mode={drawerOpen && item.chip ? 'visible' : 'hidden'}>
+        <Collapse in={drawerOpen && !!item.chip}>
           <Chip
             color={item.chip?.color}
             variant={item.chip?.variant}
             size={item.chip?.size}
             label={item.chip?.label}
-            avatar={
-              <Activity mode={item.chip?.avatar ? 'visible' : 'hidden'}>
-                <Avatar>{item.chip?.avatar}</Avatar>
-              </Activity>
-            }
+            avatar={item.chip?.avatar ? <Avatar>{item.chip?.avatar}</Avatar> : undefined}
           />
-        </Activity>
+        </Collapse>
       </ListItemButton>
     </>
   );
 }
 
-NavItem.propTypes = { item: PropTypes.any, level: PropTypes.number, isParents: PropTypes.bool, setSelectedID: PropTypes.func };
+NavItem.propTypes = {
+  item: PropTypes.any,
+  level: PropTypes.number,
+  isParents: PropTypes.bool,
+  setSelectedID: PropTypes.func
+};
