@@ -47,7 +47,7 @@ export default function AuthLogin() {
   // ✅ Navigate to dashboard on successful login
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (isAuthenticated && token) navigate('/', { replace: true });
+    if (isAuthenticated && token) navigate('/dashboard', { replace: true });
   }, [isAuthenticated]);
 
   // Cleanup on unmount
