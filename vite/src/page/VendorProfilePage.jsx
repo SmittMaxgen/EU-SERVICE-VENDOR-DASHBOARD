@@ -1054,9 +1054,8 @@ export default function ProfilePage() {
         .slice(0, 2)
     : 'V';
 
-  const profilePicUrl = vendorData?.profilepic ? `${BASE_URL}${vendorData.profilepic}` : null;
-  const businessLogoUrl = vendorData?.business_logo ? `${BASE_URL}${vendorData.business_logo}` : null;
-
+  const profilePicUrl = vendorData?.data?.profilepic ? `${BASE_URL}${vendorData?.data?.profilepic}` : null;
+  const businessLogoUrl = vendorData?.data?.business_logo ? `${BASE_URL}${vendorData?.data?.business_logo}` : null;
   if (loading && !vendorData) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}>
@@ -1130,7 +1129,7 @@ export default function ProfilePage() {
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems="center">
           <Box sx={{ position: 'relative' }}>
             <Avatar
-              src={profilePicUrl}
+              src={businessLogoUrl}
               sx={{
                 width: 90,
                 height: 90,
@@ -1141,7 +1140,7 @@ export default function ProfilePage() {
                 border: '3px solid rgba(255,255,255,0.4)'
               }}
             >
-              {!profilePicUrl && initials}
+              {!businessLogoUrl && initials}
             </Avatar>
             <IconButton
               size="small"
@@ -1339,7 +1338,7 @@ export default function ProfilePage() {
                   {fieldErr('email') && <FormHelperText>{fieldErr('email')}</FormHelperText>}
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <Stack direction="row" spacing={2} alignItems="center">
                   {profilePicUrl && <Avatar src={profilePicUrl} sx={{ width: 56, height: 56 }} />}
                   {editMode && (
@@ -1354,7 +1353,7 @@ export default function ProfilePage() {
                     </Typography>
                   )}
                 </Stack>
-              </Grid>
+              </Grid> */}
             </Grid>
             {editMode && <SaveButton />}
           </Box>
@@ -1415,23 +1414,23 @@ export default function ProfilePage() {
                   <OutlinedInput value={profile.commission_percentage} label="Commission %" disabled />
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  {businessLogoUrl && <Avatar src={businessLogoUrl} variant="rounded" sx={{ width: 56, height: 56 }} />}
-                  {editMode && (
-                    <Button variant="outlined" color="secondary" component="label" startIcon={<BusinessIcon />}>
-                      Upload Logo
-                      <input hidden accept="image/*" type="file" onChange={handleFileChange('business_logo')} />
-                    </Button>
-                  )}
-                  {profile.business_logo instanceof File && (
-                    <Typography variant="caption" color="text.secondary">
-                      {profile.business_logo.name}
-                    </Typography>
-                  )}
-                </Stack>
-              </Grid>
             </Grid>
+            {/* <Grid item xs={12}>
+              <Stack direction="row" spacing={2} alignItems="center">
+                {<Avatar src={businessLogoUrl} variant="rounded" sx={{ width: 56, height: 56 }} />}
+                {editMode && (
+                  <Button variant="outlined" color="secondary" component="label" startIcon={<BusinessIcon />}>
+                    Upload Logo
+                    <input hidden accept="image/*" type="file" onChange={handleFileChange('business_logo')} />
+                  </Button>
+                )}
+                {profile.business_logo instanceof File && (
+                  <Typography variant="caption" color="text.secondary">
+                    {profile.business_logo.name}
+                  </Typography>
+                )}
+              </Stack>
+            </Grid> */}
             {editMode && <SaveButton />}
           </Box>
         )}
@@ -1721,6 +1720,7 @@ export default function ProfilePage() {
               <FormControl fullWidth error={Boolean(docFormErrors.document_type)} required>
                 <InputLabel>Document Type *</InputLabel>
                 <Select
+                  sx={{ width: '15vw' }}
                   value={docForm.document_type}
                   onChange={(e) => {
                     setDocForm((prev) => ({ ...prev, document_type: e.target.value }));
@@ -1740,7 +1740,7 @@ export default function ProfilePage() {
 
             {/* Document Number */}
             <Grid item xs={12}>
-              <FormControl fullWidth error={Boolean(docFormErrors.document_number)} required>
+              <FormControl sx={{ width: '15vw' }} fullWidth error={Boolean(docFormErrors.document_number)} required>
                 <InputLabel>Document Number *</InputLabel>
                 <OutlinedInput
                   value={docForm.document_number}
@@ -1756,7 +1756,7 @@ export default function ProfilePage() {
 
             {/* File Upload */}
             <Grid item xs={12}>
-              <Box>
+              <Box sx={{ width: '15vw' }}>
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   Document File {!isEditingDoc && <span style={{ color: 'red' }}>*</span>}
                   {isEditingDoc && (
