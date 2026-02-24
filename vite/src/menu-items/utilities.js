@@ -32,6 +32,14 @@ const utilities = {
       icon: icons.IconTypography,
       breadcrumbs: false
     },
+    {
+      id: 'vendor-profile',
+      title: 'Vendor Profile',
+      type: 'item',
+      url: '/vendor-profile',
+      icon: icons.IconTypography,
+      breadcrumbs: false
+    }
     // {
     //   id: 'util-color',
     //   title: 'Color',

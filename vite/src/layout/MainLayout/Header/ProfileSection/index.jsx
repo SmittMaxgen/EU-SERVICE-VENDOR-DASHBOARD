@@ -198,18 +198,10 @@ export default function ProfileSection() {
                             <IconUser stroke={1.5} size="20px" />
                           </ListItemIcon>
                           <ListItemText
+                            onClick={() => navigate('/vendor-profile')}
                             primary={
                               <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Typography variant="body2">Social Profile</Typography>
-                                {/* <Chip
-                                  slotProps={{
-                                    label: { sx: { mt: 0.25 } }
-                                  }}
-                                  label="02"
-                                  variant="filled"
-                                  size="small"
-                                  color="warning"
-                                /> */}
                               </Stack>
                             }
                           />

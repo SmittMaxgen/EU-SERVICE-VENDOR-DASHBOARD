@@ -18,6 +18,7 @@ const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 // ✅ your new pages
 const ServicesPage = Loadable(lazy(() => import('../page/servicePage')));
 const VendorServicesPage = Loadable(lazy(() => import('../page/vendorServicePage')));
+const VendorProfilePage = Loadable(lazy(() => import('../page/VendorProfilePage')));
 const SubCategoryPage = Loadable(lazy(() => import('../page/SubCategoriesPage')));
 
 const MainRoutes = {
@@ -56,6 +57,15 @@ const MainRoutes = {
         {
           path: '', // /vendor-services
           element: <VendorServicesPage />
+        }
+      ]
+    },
+    {
+      path: 'vendor-profile',
+      children: [
+        {
+          path: '', // /vendor-services
+          element: <VendorProfilePage />
         }
       ]
     },
