@@ -61,7 +61,7 @@ const MainRoutes = {
       ]
     },
     {
-      path: 'vendor-profile',
+      path: 'vendor-profile/:id',
       children: [
         {
           path: '', // /vendor-services

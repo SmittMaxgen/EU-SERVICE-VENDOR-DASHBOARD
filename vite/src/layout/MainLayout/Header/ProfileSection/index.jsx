@@ -33,6 +33,8 @@ import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons-re
 import { logoutVendor } from '../../../../features/auth/authThunk';
 import { forceLogout } from '../../../../features/auth/authSlice';
 import { useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
+import { selectSelectedVendor } from '../../../../features/vendorProfile/vendorProfileSelectors';
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -42,7 +44,8 @@ export default function ProfileSection() {
   const {
     state: { borderRadius }
   } = useConfig();
-
+  const vendorData = useSelector(selectSelectedVendor);
+  console.log('vendorData:::', vendorData);
   const [sdm, setSdm] = useState(true);
   const [value, setValue] = useState('');
   const [notification, setNotification] = useState(false);
@@ -198,7 +201,7 @@ export default function ProfileSection() {
                             <IconUser stroke={1.5} size="20px" />
                           </ListItemIcon>
                           <ListItemText
-                            onClick={() => navigate('/vendor-profile')}
+                            onClick={() => navigate(`/vendor-profile/${vendorData?.data?.id || null}`)}
                             primary={
                               <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Typography variant="body2">Social Profile</Typography>
