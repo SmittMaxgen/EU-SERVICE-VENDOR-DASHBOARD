@@ -16,11 +16,26 @@ export const fetchVendors = createAsyncThunk('vendor/fetchAll', async (_, { reje
 });
 
 // ─── Fetch Single Vendor ──────────────────────────────────────────────────────
+// export const fetchVendorById = createAsyncThunk('vendor/fetchProfile', async (_, { rejectWithValue }) => {
+//   try {
+//     const token = localStorage.getItem('token');
+
+//     const response = await axiosInstance.get('/vendor/profile/');
+//     return response.data;
+//   } catch (error) {
+//     return rejectWithValue(error.response?.data || error.message);
+//   }
+// });
+
 export const fetchVendorById = createAsyncThunk('vendor/fetchProfile', async (_, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem('token');
 
-    const response = await axiosInstance.get('/vendor/profile/');
+    const response = await axiosInstance.get('/vendor/profile/', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response?.data || error.message);
