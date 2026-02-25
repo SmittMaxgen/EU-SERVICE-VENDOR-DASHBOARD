@@ -1,11 +1,11 @@
 // ─── Base Selector ───────────────────────────────────────────────────────────
-export const selectVendorServiceState = (state) => state.vendorService;
+export const selectVendorServiceState = (state) => state.vendorServices;
 
 // ─── All Vendor Services ──────────────────────────────────────────────────────
 export const selectAllVendorServices = (state) => state.vendorService.vendorServices;
 
 // ─── Selected Vendor Service ──────────────────────────────────────────────────
-export const selectSelectedVendorService = (state) => state.vendorService.selectedVendorService;
+export const selectSelectedVendorService = (state) => state.vendorService.vendorServices;
 
 // ─── Loading ──────────────────────────────────────────────────────────────────
 export const selectVendorServiceLoading = (state) => state.vendorService.loading;

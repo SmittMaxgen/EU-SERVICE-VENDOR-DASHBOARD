@@ -2,18 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../api/apiInstance';
 
 // ─── Fetch All Vendor Services ────────────────────────────────────────────────
-// export const fetchVendorServices = createAsyncThunk('vendorService/fetchAll', async (_, { rejectWithValue }) => {
-//   try {
-//     const response = await axiosInstance.get('/vendor-services/');
-//     return response.data;
-//   } catch (error) {
-//     return rejectWithValue(error.response?.data || error.message);
-//   }
-// });
 
-export const fetchVendorServices = createAsyncThunk('vendorService/fetchAll', async (_, { rejectWithValue }) => {
+export const fetchVendorServices = createAsyncThunk('vendorService/fetchAll', async (vendorId, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.get('/vendor-services/');
+    const response = await axiosInstance.get(`/vendor-services/?vendor_id=${vendorId}`);
+
     const res = response.data;
 
     // ✅ your API returns { success: true, data: [...] }

@@ -17,10 +17,13 @@ import Snackbar from '@mui/material/Snackbar';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
+import Chip from '@mui/material/Chip';
+import Avatar from '@mui/material/Avatar';
 
 // icons
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import CategoryIcon from '@mui/icons-material/Category';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -37,35 +40,32 @@ import {
   selectAllVendorServices,
   selectVendorServiceLoading,
   selectVendorServiceError,
-  selectVendorServiceSuccess,
-  selectSelectedVendorService
+  selectVendorServiceSuccess
 } from 'features/vendorService/vendorServiceSelectors';
-import {
-  clearVendorServiceMessages,
-  setSelectedVendorService,
-  clearSelectedVendorService
-} from 'features/vendorService/vendorServiceSlice';
+import { clearVendorServiceMessages } from 'features/vendorService/vendorServiceSlice';
+import { fetchVendorById } from '../features/vendorProfile/vendorProfileThunk';
+import { selectSelectedVendor } from '../features/vendorProfile/vendorProfileSelectors';
 
 // ─────────────────────────────────────────────────────────────────────────────
 const EMPTY_FORM = {
-  vendor: '', // vendor ID
-  service: '', // service ID
   custom_price: '',
   status: 'active'
 };
+const BASE_URL = 'https://serviceapp.pythonanywhere.com';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// VendorServicesPage
 // ─────────────────────────────────────────────────────────────────────────────
 export default function VendorServicesPage() {
   const dispatch = useDispatch();
 
-  const vendorServices = useSelector(selectAllVendorServices);
-  console.log('vendorServices', vendorServices);
+  // Selector returns the flat array directly: [{id, services:[...], ...}, ...]
+  const vendorServices = useSelector(selectAllVendorServices) ?? [];
   const loading = useSelector(selectVendorServiceLoading);
   const error = useSelector(selectVendorServiceError);
   const success = useSelector(selectVendorServiceSuccess);
-  const selectedVendorService = useSelector(selectSelectedVendorService);
+  const vendorData = useSelector(selectSelectedVendor);
+
+  // Local state — avoids Redux losing nested arrays like services[]
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -74,12 +74,16 @@ export default function VendorServicesPage() {
   const [search, setSearch] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-  // ─── Fetch on mount ───────────────────────────────────────────────────────
   useEffect(() => {
-    dispatch(fetchVendorServices());
+    dispatch(fetchVendorById());
   }, [dispatch]);
 
-  // ─── Snackbar handler ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (vendorData?.data?.id) {
+      dispatch(fetchVendorServices(vendorData.data.id));
+    }
+  }, [dispatch, vendorData]);
+
   useEffect(() => {
     if (success) {
       setSnackbar({ open: true, message: success, severity: 'success' });
@@ -96,6 +100,15 @@ export default function VendorServicesPage() {
     }
   }, [success, error, dispatch]);
 
+  const filteredVendorServices = vendorServices.filter((vs) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return vs.services?.some(
+      (s) =>
+        s.name?.toLowerCase().includes(q) || s.subcategory?.name?.toLowerCase().includes(q) || s.category?.name?.toLowerCase().includes(q)
+    );
+  });
+
   const handleOpenCreate = () => {
     setIsEditing(false);
     setForm(EMPTY_FORM);
@@ -105,8 +118,6 @@ export default function VendorServicesPage() {
   const handleOpenEdit = (vs) => {
     setIsEditing(true);
     setForm({
-      vendor: vs.vendor?.id ?? '',
-      service: vs.service?.id ?? '',
       custom_price: vs.custom_price ?? '',
       status: vs.status ?? 'active',
       _id: vs.id
@@ -114,14 +125,15 @@ export default function VendorServicesPage() {
     setDialogOpen(true);
   };
 
+  // Store directly in local state — no Redux dispatch, no serialization loss
   const handleCardClick = (vs) => {
-    dispatch(setSelectedVendorService(vs));
+    setSelectedItem(vs);
     setDetailOpen(true);
   };
 
   const handleDetailClose = () => {
     setDetailOpen(false);
-    dispatch(clearSelectedVendorService());
+    setSelectedItem(null);
   };
 
   const handleDelete = (id) => {
@@ -132,22 +144,15 @@ export default function VendorServicesPage() {
 
   const handleSubmit = () => {
     const payload = {
-      vendor: form.vendor ? Number(form.vendor) : undefined,
-      service: form.service ? Number(form.service) : undefined,
       custom_price: form.custom_price,
       status: form.status
     };
-
     if (isEditing) {
       dispatch(updateVendorService({ id: form._id, data: payload }));
     } else {
       dispatch(createVendorService(payload));
     }
   };
-
-  const filteredVendorServices = vendorServices.filter(
-    (vs) => vs.vendor?.name?.toLowerCase().includes(search.toLowerCase()) || vs.service?.name?.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <Box>
@@ -159,10 +164,9 @@ export default function VendorServicesPage() {
           </Button>
         }
       >
-        {/* Search */}
         <TextField
           fullWidth
-          placeholder="Search by vendor or service name..."
+          placeholder="Search by service, subcategory or category..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           size="small"
@@ -176,7 +180,6 @@ export default function VendorServicesPage() {
           }}
         />
 
-        {/* ─── Cards Grid ─── */}
         <Grid container spacing={3}>
           {loading && vendorServices.length === 0
             ? [1, 2, 3, 4, 5, 6].map((i) => (
@@ -210,30 +213,11 @@ export default function VendorServicesPage() {
         <DialogTitle>{isEditing ? 'Edit Vendor Service' : 'Add Vendor Service'}</DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2} sx={{ pt: 1 }}>
-            {/* <Grid item xs={12}>
-              <TextField
-                label="Vendor ID *"
-                fullWidth
-                type="number"
-                value={form.vendor}
-                onChange={(e) => setForm({ ...form, vendor: e.target.value })}
-                helperText="Enter the vendor's ID"
-              />
-            </Grid> */}
-            {/* <Grid item xs={12}>
-              <TextField
-                label="Service ID *"
-                fullWidth
-                type="number"
-                value={form.service}
-                onChange={(e) => setForm({ ...form, service: e.target.value })}
-                helperText="Enter the service's ID"
-              />
-            </Grid> */}
             <Grid item xs={12}>
               <TextField
                 label="Custom Price (₹)"
                 fullWidth
+                type="number"
                 value={form.custom_price}
                 onChange={(e) => setForm({ ...form, custom_price: e.target.value })}
               />
@@ -250,69 +234,160 @@ export default function VendorServicesPage() {
           <Button onClick={() => setDialogOpen(false)} color="inherit">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary" disabled={loading || !form.vendor || !form.service}>
+          <Button onClick={handleSubmit} variant="contained" color="primary" disabled={loading}>
             {isEditing ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* ─── Detail Dialog ─── */}
-      <Dialog open={detailOpen} onClose={handleDetailClose} maxWidth="xs" fullWidth>
-        {selectedVendorService && (
+      <Dialog open={detailOpen} onClose={handleDetailClose} maxWidth="sm" fullWidth>
+        {selectedItem && (
           <>
             <DialogTitle>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h4">{selectedVendorService.service?.name}</Typography>
+                <Stack spacing={0.5}>
+                  <Typography variant="h4">Service Details</Typography>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Chip
+                      label={selectedItem.status === 'active' ? 'Active' : 'Inactive'}
+                      size="small"
+                      sx={{
+                        bgcolor: selectedItem.status === 'active' ? 'success.dark' : 'error.dark',
+                        color: '#fff',
+                        fontWeight: 600,
+                        fontSize: '0.7rem'
+                      }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      Custom Price: <strong>₹{selectedItem.custom_price}</strong>
+                    </Typography>
+                  </Stack>
+                </Stack>
                 <Button
                   size="small"
                   variant="outlined"
                   color="primary"
                   onClick={() => {
                     handleDetailClose();
-                    handleOpenEdit(selectedVendorService);
+                    handleOpenEdit(selectedItem);
                   }}
                 >
                   Edit
                 </Button>
               </Stack>
             </DialogTitle>
+
             <DialogContent dividers>
-              <Stack spacing={1.5}>
-                <Stack direction="row" spacing={1}>
-                  <Typography variant="subtitle2" color="text.secondary" sx={{ width: 130, flexShrink: 0 }}>
-                    Vendor
+              {Array.isArray(selectedItem.services) && selectedItem.services.length > 0 ? (
+                <Stack spacing={2}>
+                  <Typography variant="subtitle1" fontWeight={700}>
+                    Included Services ({selectedItem.services.length})
                   </Typography>
-                  <Typography>{selectedVendorService.vendor?.name}</Typography>
+
+                  {selectedItem.services.map((svc) => (
+                    <Box
+                      key={svc.id}
+                      sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 2, bgcolor: 'background.default' }}
+                    >
+                      {/* Header */}
+                      <Stack direction="row" spacing={1.5} alignItems="flex-start" sx={{ mb: 1.5 }}>
+                        <Avatar
+                          src={svc.service_image ? `${BASE_URL || ''}${svc.service_image}` : undefined}
+                          variant="rounded"
+                          sx={{ width: 48, height: 48, bgcolor: 'primary.light' }}
+                        >
+                          <CategoryIcon />
+                        </Avatar>
+                        <Box flex={1}>
+                          <Typography fontWeight={700} fontSize="1rem">
+                            {svc.name}
+                          </Typography>
+                          <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
+                            {svc.category?.name && <Chip label={svc.category.name} size="small" color="primary" variant="outlined" />}
+                            {svc.subcategory?.name && (
+                              <Chip label={svc.subcategory.name} size="small" color="secondary" variant="outlined" />
+                            )}
+                          </Stack>
+                        </Box>
+                        <Box textAlign="right">
+                          <Typography fontSize="0.75rem" color="text.secondary">
+                            Base Price
+                          </Typography>
+                          <Typography fontWeight={700} color="primary">
+                            ₹{svc.base_price}
+                          </Typography>
+                        </Box>
+                      </Stack>
+
+                      <Divider sx={{ mb: 1.5 }} />
+
+                      <Stack spacing={1}>
+                        {svc.description && (
+                          <Stack direction="row" spacing={1}>
+                            <Typography variant="caption" color="text.secondary" sx={{ width: 120, flexShrink: 0, fontWeight: 600 }}>
+                              Description
+                            </Typography>
+                            <Typography variant="caption">{svc.description}</Typography>
+                          </Stack>
+                        )}
+                        {svc.what_covered && (
+                          <Stack direction="row" spacing={1}>
+                            <Typography variant="caption" color="text.secondary" sx={{ width: 120, flexShrink: 0, fontWeight: 600 }}>
+                              What's Covered
+                            </Typography>
+                            <Typography variant="caption" color="success.main">
+                              {svc.what_covered}
+                            </Typography>
+                          </Stack>
+                        )}
+                        {svc.not_covered && (
+                          <Stack direction="row" spacing={1}>
+                            <Typography variant="caption" color="text.secondary" sx={{ width: 120, flexShrink: 0, fontWeight: 600 }}>
+                              Not Covered
+                            </Typography>
+                            <Typography variant="caption" color="error.main">
+                              {svc.not_covered}
+                            </Typography>
+                          </Stack>
+                        )}
+                        {svc.will_need_from_you && (
+                          <Stack direction="row" spacing={1}>
+                            <Typography variant="caption" color="text.secondary" sx={{ width: 120, flexShrink: 0, fontWeight: 600 }}>
+                              You'll Need
+                            </Typography>
+                            <Typography variant="caption">{svc.will_need_from_you}</Typography>
+                          </Stack>
+                        )}
+                        <Stack direction="row" spacing={3}>
+                          {svc.duration_minutes && (
+                            <Stack direction="row" spacing={0.5}>
+                              <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                                Duration:
+                              </Typography>
+                              <Typography variant="caption">{svc.duration_minutes} min</Typography>
+                            </Stack>
+                          )}
+                          {svc.vat_percentage && (
+                            <Stack direction="row" spacing={0.5}>
+                              <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                                VAT:
+                              </Typography>
+                              <Typography variant="caption">{svc.vat_percentage}%</Typography>
+                            </Stack>
+                          )}
+                        </Stack>
+                      </Stack>
+                    </Box>
+                  ))}
                 </Stack>
-                <Stack direction="row" spacing={1}>
-                  <Typography variant="subtitle2" color="text.secondary" sx={{ width: 130, flexShrink: 0 }}>
-                    Service
-                  </Typography>
-                  <Typography>{selectedVendorService.service?.name}</Typography>
-                </Stack>
-                <Divider />
-                <Stack direction="row" spacing={1}>
-                  <Typography variant="subtitle2" color="text.secondary" sx={{ width: 130, flexShrink: 0 }}>
-                    Custom Price
-                  </Typography>
-                  <Typography fontWeight={700}>₹{selectedVendorService.custom_price}</Typography>
-                </Stack>
-                <Stack direction="row" spacing={1}>
-                  <Typography variant="subtitle2" color="text.secondary" sx={{ width: 130, flexShrink: 0 }}>
-                    Status
-                  </Typography>
-                  <Typography
-                    sx={{
-                      color: selectedVendorService.status === 'active' ? 'success.main' : 'error.main',
-                      fontWeight: 600,
-                      textTransform: 'capitalize'
-                    }}
-                  >
-                    {selectedVendorService.status}
-                  </Typography>
-                </Stack>
-              </Stack>
+              ) : (
+                <Typography color="text.secondary" textAlign="center" py={4}>
+                  No services linked to this entry.
+                </Typography>
+              )}
             </DialogContent>
+
             <DialogActions>
               <Button onClick={handleDetailClose}>Close</Button>
             </DialogActions>

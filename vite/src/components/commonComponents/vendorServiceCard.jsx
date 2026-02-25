@@ -17,8 +17,8 @@ import Skeleton from '@mui/material/Skeleton';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import StoreIcon from '@mui/icons-material/Store';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -38,12 +38,7 @@ const VendorServiceCardSkeleton = () => (
 
 // ─────────────────────────────────────────────────────────────────────────────
 // VendorServiceCard Component
-// Props:
-//   vendorService — vendor service object from API
-//   isLoading     — show skeleton
-//   onClick       — called when card body is clicked (view details)
-//   onEdit        — called with vendorService object when Edit is clicked
-//   onDelete      — called with vendorService.id when Delete is clicked
+
 // ─────────────────────────────────────────────────────────────────────────────
 export default function VendorServiceCard({ vendorService, isLoading, onClick, onEdit, onDelete }) {
   const theme = useTheme();
@@ -65,9 +60,17 @@ export default function VendorServiceCard({ vendorService, isLoading, onClick, o
     onDelete?.(vendorService.id);
   };
 
-  // if (isLoading) return <VendorServiceCardSkeleton />;
+  if (isLoading) return <VendorServiceCardSkeleton />;
 
-  const isActive = vendorService && vendorService?.status === 'active';
+  const isActive = vendorService?.status === 'active';
+  const services = vendorService?.services ?? [];
+
+  // Derive a display title: first service name or fallback
+  const primaryService = services[0];
+  const displayTitle = primaryService?.name ?? 'Service';
+
+  // Unique subcategories from services list
+  const subcategories = [...new Map(services.map((s) => [s.subcategory?.id, s.subcategory]).filter(([id]) => id)).values()];
 
   return (
     <MainCard
@@ -108,25 +111,20 @@ export default function VendorServiceCard({ vendorService, isLoading, onClick, o
       }}
     >
       <Box sx={{ p: 2.25, position: 'relative', zIndex: 1 }}>
-        {/* ─── Top Row: Vendor Avatar + Menu ─── */}
+        {/* ─── Top Row: Icon + Three-dot menu ─── */}
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Avatar
-              variant="rounded"
-              sx={{
-                bgcolor: 'primary.800',
-                color: '#fff',
-                width: 36,
-                height: 36,
-                borderRadius: 1.5
-              }}
-            >
-              <StoreIcon fontSize="small" />
-            </Avatar>
-            <Typography sx={{ fontSize: '0.8rem', color: 'primary.200', fontWeight: 600 }}>
-              {vendorService?.vendor?.name ?? 'Vendor'}
-            </Typography>
-          </Stack>
+          <Avatar
+            variant="rounded"
+            sx={{
+              bgcolor: 'primary.800',
+              color: '#fff',
+              width: 36,
+              height: 36,
+              borderRadius: 1.5
+            }}
+          >
+            <MiscellaneousServicesIcon fontSize="small" />
+          </Avatar>
 
           {/* Three-dot menu */}
           <Avatar
@@ -164,15 +162,42 @@ export default function VendorServiceCard({ vendorService, isLoading, onClick, o
           </MenuItem>
         </Menu>
 
-        {/* ─── Service Name ─── */}
-        <Typography sx={{ fontSize: '1.2rem', fontWeight: 700, mt: 1.5, mb: 0.5 }}>{vendorService?.service?.name ?? 'Service'}</Typography>
+        {/* ─── Primary Service Name ─── */}
+        <Typography sx={{ fontSize: '1.1rem', fontWeight: 700, mt: 1.5 }}>{displayTitle}</Typography>
 
-        <Divider sx={{ borderColor: 'primary.800', mb: 1.5 }} />
+        {/* Extra services count badge */}
+        {services.length > 1 && (
+          <Typography sx={{ fontSize: '0.75rem', color: 'primary.200', mb: 0.5 }}>
+            +{services.length - 1} more service{services.length - 1 > 1 ? 's' : ''}
+          </Typography>
+        )}
+
+        <Divider sx={{ borderColor: 'primary.800', my: 1.25 }} />
+
+        {/* ─── Subcategory Tags ─── */}
+        {subcategories.length > 0 && (
+          <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: 1.25 }}>
+            {subcategories.map((sub) => (
+              <Chip
+                key={sub.id}
+                label={sub.name}
+                size="small"
+                sx={{
+                  bgcolor: 'primary.800',
+                  color: 'primary.200',
+                  fontSize: '0.68rem',
+                  fontWeight: 600,
+                  height: 20
+                }}
+              />
+            ))}
+          </Stack>
+        )}
 
         {/* ─── Price Row ─── */}
         <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1.5 }}>
-          <AttachMoneyIcon sx={{ fontSize: '1rem', color: 'primary.200' }} />
-          <Typography sx={{ fontSize: '1.1rem', fontWeight: 700 }}>₹{vendorService?.custom_price ?? '—'}</Typography>
+          <CurrencyRupeeIcon sx={{ fontSize: '1rem', color: 'primary.200' }} />
+          <Typography sx={{ fontSize: '1.1rem', fontWeight: 700 }}>{vendorService?.custom_price ?? '—'}</Typography>
           <Typography sx={{ fontSize: '0.75rem', color: 'primary.200' }}>(Custom Price)</Typography>
         </Stack>
 
@@ -195,10 +220,26 @@ export default function VendorServiceCard({ vendorService, isLoading, onClick, o
 VendorServiceCard.propTypes = {
   vendorService: PropTypes.shape({
     id: PropTypes.number,
+    vendor_id: PropTypes.number,
+    service_id: PropTypes.arrayOf(PropTypes.number),
     custom_price: PropTypes.string,
     status: PropTypes.string,
-    vendor: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }),
-    service: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string })
+    services: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string,
+        base_price: PropTypes.string,
+        description: PropTypes.string,
+        duration_minutes: PropTypes.number,
+        vat_percentage: PropTypes.string,
+        what_covered: PropTypes.string,
+        not_covered: PropTypes.string,
+        will_need_from_you: PropTypes.string,
+        service_image: PropTypes.string,
+        category: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }),
+        subcategory: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string })
+      })
+    )
   }),
   isLoading: PropTypes.bool,
   onClick: PropTypes.func,
