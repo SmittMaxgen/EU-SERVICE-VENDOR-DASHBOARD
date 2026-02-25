@@ -222,7 +222,7 @@ export default function VendorServicesPage() {
                     <Avatar
                       src={svc.service_image ? `${BASE_URL || ''}${svc.service_image}` : undefined}
                       variant="rounded"
-                      sx={{ width: 56, height: 56, bgcolor: 'primary.light' }}
+                      sx={{ width: 100, height: 100, bgcolor: 'primary.light' }}
                     >
                       <CategoryIcon />
                     </Avatar>
@@ -271,7 +271,7 @@ export default function VendorServicesPage() {
                     {svc.what_covered && (
                       <Grid item xs={12} sm={6}>
                         <Typography variant="caption" color="text.secondary" fontWeight={600} display="block">
-                          ✅ What's Covered
+                          What's Covered
                         </Typography>
                         <Typography variant="body2" color="success.main" sx={{ mt: 0.25 }}>
                           {svc.what_covered}
@@ -281,7 +281,7 @@ export default function VendorServicesPage() {
                     {svc.not_covered && (
                       <Grid item xs={12} sm={6}>
                         <Typography variant="caption" color="text.secondary" fontWeight={600} display="block">
-                          ❌ Not Covered
+                          Not Covered
                         </Typography>
                         <Typography variant="body2" color="error.main" sx={{ mt: 0.25 }}>
                           {svc.not_covered}
@@ -291,7 +291,7 @@ export default function VendorServicesPage() {
                     {svc.will_need_from_you && (
                       <Grid item xs={12}>
                         <Typography variant="caption" color="text.secondary" fontWeight={600} display="block">
-                          🔧 You'll Need to Provide
+                          You'll Need to Provide
                         </Typography>
                         <Typography variant="body2" sx={{ mt: 0.25 }}>
                           {svc.will_need_from_you}
@@ -304,7 +304,7 @@ export default function VendorServicesPage() {
                           {svc.duration_minutes && (
                             <Box>
                               <Typography variant="caption" color="text.secondary" fontWeight={600} display="block">
-                                ⏱ Duration
+                                Duration
                               </Typography>
                               <Typography variant="body2">{svc.duration_minutes} min</Typography>
                             </Box>
@@ -312,7 +312,7 @@ export default function VendorServicesPage() {
                           {svc.vat_percentage && (
                             <Box>
                               <Typography variant="caption" color="text.secondary" fontWeight={600} display="block">
-                                🧾 VAT
+                               VAT
                               </Typography>
                               <Typography variant="body2">{svc.vat_percentage}%</Typography>
                             </Box>
