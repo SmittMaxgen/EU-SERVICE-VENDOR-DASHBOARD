@@ -24,10 +24,10 @@ import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import MainCard from 'ui-component/cards/MainCard';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Skeleton
+// Skeleton — same fixed height as the real card
 // ─────────────────────────────────────────────────────────────────────────────
 const VendorServiceCardSkeleton = () => (
-  <MainCard border={false} content={false} sx={{ bgcolor: 'primary.dark', overflow: 'hidden' }}>
+  <MainCard border={false} content={false} sx={{ bgcolor: 'primary.dark', overflow: 'hidden', height: 200 }}>
     <Box sx={{ p: 2.25 }}>
       <Skeleton variant="rounded" width={40} height={40} sx={{ bgcolor: 'primary.800', mb: 2 }} />
       <Skeleton variant="text" width="60%" sx={{ bgcolor: 'primary.800', mb: 1 }} />
@@ -35,9 +35,6 @@ const VendorServiceCardSkeleton = () => (
     </Box>
   </MainCard>
 );
-
-// ─────────────────────────────────────────────────────────────────────────────
-// VendorServiceCard Component
 
 // ─────────────────────────────────────────────────────────────────────────────
 export default function VendorServiceCard({ vendorService, isLoading, onClick, onEdit, onDelete }) {
@@ -64,12 +61,8 @@ export default function VendorServiceCard({ vendorService, isLoading, onClick, o
 
   const isActive = vendorService?.status === 'active';
   const services = vendorService?.services ?? [];
-
-  // Derive a display title: first service name or fallback
   const primaryService = services[0];
   const displayTitle = primaryService?.name ?? 'Service';
-
-  // Unique subcategories from services list
   const subcategories = [...new Map(services.map((s) => [s.subcategory?.id, s.subcategory]).filter(([id]) => id)).values()];
 
   return (
@@ -83,6 +76,10 @@ export default function VendorServiceCard({ vendorService, isLoading, onClick, o
         overflow: 'hidden',
         position: 'relative',
         cursor: onClick ? 'pointer' : 'default',
+        // ── Fixed dimensions — every card same size ──
+        height: 200,
+        display: 'flex',
+        flexDirection: 'column',
         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
         '&:hover': onClick ? { transform: 'translateY(-4px)', boxShadow: '0 12px 32px rgba(0,0,0,0.3)' } : {},
         '&:after': {
@@ -110,23 +107,23 @@ export default function VendorServiceCard({ vendorService, isLoading, onClick, o
         }
       }}
     >
-      <Box sx={{ p: 2.25, position: 'relative', zIndex: 1 }}>
+      <Box
+        sx={{
+          p: 2.25,
+          position: 'relative',
+          zIndex: 1,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden' // clip any overflow text inside the fixed box
+        }}
+      >
         {/* ─── Top Row: Icon + Three-dot menu ─── */}
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-          <Avatar
-            variant="rounded"
-            sx={{
-              bgcolor: 'primary.800',
-              color: '#fff',
-              width: 36,
-              height: 36,
-              borderRadius: 1.5
-            }}
-          >
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ flexShrink: 0 }}>
+          <Avatar variant="rounded" sx={{ bgcolor: 'primary.800', color: '#fff', width: 36, height: 36, borderRadius: 1.5 }}>
             <MiscellaneousServicesIcon fontSize="small" />
           </Avatar>
 
-          {/* Three-dot menu */}
           <Avatar
             variant="rounded"
             sx={{
@@ -162,56 +159,77 @@ export default function VendorServiceCard({ vendorService, isLoading, onClick, o
           </MenuItem>
         </Menu>
 
-        {/* ─── Primary Service Name ─── */}
-        <Typography sx={{ fontSize: '1.1rem', fontWeight: 700, mt: 1.5 }}>{displayTitle}</Typography>
+        {/* ─── Service Name — single line, ellipsis if too long ─── */}
+        <Typography
+          sx={{
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            mt: 1.25,
+            mb: 0.25,
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+        >
+          {displayTitle}
+        </Typography>
 
-        {/* Extra services count badge */}
         {services.length > 1 && (
-          <Typography sx={{ fontSize: '0.75rem', color: 'primary.200', mb: 0.5 }}>
+          <Typography sx={{ fontSize: '0.72rem', color: 'primary.200', mb: 0.25, flexShrink: 0 }}>
             +{services.length - 1} more service{services.length - 1 > 1 ? 's' : ''}
           </Typography>
         )}
 
-        <Divider sx={{ borderColor: 'primary.800', my: 1.25 }} />
+        <Divider sx={{ borderColor: 'primary.800', my: 1, flexShrink: 0 }} />
 
         {/* ─── Subcategory Tags ─── */}
         {subcategories.length > 0 && (
-          <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: 1.25 }}>
-            {subcategories.map((sub) => (
+          <Stack direction="row" flexWrap="wrap" gap={0.5} sx={{ mb: 0.75, flexShrink: 0 }}>
+            {subcategories.slice(0, 2).map(
+              (
+                sub // max 2 chips to avoid overflow
+              ) => (
+                <Chip
+                  key={sub.id}
+                  label={sub.name}
+                  size="small"
+                  sx={{ bgcolor: 'primary.800', color: 'primary.200', fontSize: '0.65rem', fontWeight: 600, height: 18 }}
+                />
+              )
+            )}
+            {subcategories.length > 2 && (
               <Chip
-                key={sub.id}
-                label={sub.name}
+                label={`+${subcategories.length - 2}`}
                 size="small"
-                sx={{
-                  bgcolor: 'primary.800',
-                  color: 'primary.200',
-                  fontSize: '0.68rem',
-                  fontWeight: 600,
-                  height: 20
-                }}
+                sx={{ bgcolor: 'primary.800', color: 'primary.200', fontSize: '0.65rem', fontWeight: 600, height: 18 }}
               />
-            ))}
+            )}
           </Stack>
         )}
 
-        {/* ─── Price Row ─── */}
-        <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1.5 }}>
-          <CurrencyRupeeIcon sx={{ fontSize: '1rem', color: 'primary.200' }} />
-          <Typography sx={{ fontSize: '1.1rem', fontWeight: 700 }}>{vendorService?.custom_price ?? '—'}</Typography>
-          <Typography sx={{ fontSize: '0.75rem', color: 'primary.200' }}>(Custom Price)</Typography>
-        </Stack>
+        {/* ─── Bottom: Price + Status pushed to end ─── */}
+        <Box sx={{ mt: 'auto', flexShrink: 0 }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Stack direction="row" alignItems="center" spacing={0.25}>
+              <CurrencyRupeeIcon sx={{ fontSize: '0.95rem', color: 'primary.200' }} />
+              <Typography sx={{ fontSize: '1.05rem', fontWeight: 700 }}>{vendorService?.custom_price ?? '—'}</Typography>
+              <Typography sx={{ fontSize: '0.7rem', color: 'primary.200' }}>(Custom)</Typography>
+            </Stack>
 
-        {/* ─── Status Badge ─── */}
-        <Chip
-          label={isActive ? 'Active' : 'Inactive'}
-          size="small"
-          sx={{
-            bgcolor: isActive ? 'success.dark' : 'error.dark',
-            color: '#fff',
-            fontWeight: 600,
-            fontSize: '0.7rem'
-          }}
-        />
+            <Chip
+              label={isActive ? 'Active' : 'Inactive'}
+              size="small"
+              sx={{
+                bgcolor: isActive ? 'success.dark' : 'error.dark',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: '0.68rem',
+                height: 20
+              }}
+            />
+          </Stack>
+        </Box>
       </Box>
     </MainCard>
   );

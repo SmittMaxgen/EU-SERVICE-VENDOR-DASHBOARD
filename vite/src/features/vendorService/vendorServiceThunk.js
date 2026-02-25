@@ -3,24 +3,53 @@ import axiosInstance from '../../api/apiInstance';
 
 // ─── Fetch All Vendor Services ────────────────────────────────────────────────
 
+// export const fetchVendorServices = createAsyncThunk('vendorService/fetchAll', async (vendorId, { rejectWithValue }) => {
+//   try {
+//     const response = await axiosInstance.get(`/vendor-services/?vendor_id=${vendorId}`);
+
+//     const res = response.data;
+
+//     // ✅ your API returns { success: true, data: [...] }
+//     if (res.success && Array.isArray(res.data)) return res.data;
+
+//     // fallback handles plain array too
+//     if (Array.isArray(res)) return res;
+
+//     // fallback handles { results: [...] } pagination
+//     if (Array.isArray(res.results)) return res.results;
+
+//     return [];
+//   } catch (error) {
+//     return rejectWithValue(error.response?.data || error.message);
+//   }
+// });
+
 export const fetchVendorServices = createAsyncThunk('vendorService/fetchAll', async (vendorId, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.get(`/vendor-services/?vendor_id=${vendorId}`);
+    const response = await axiosInstance.get('/vendor-services/', {
+      params: vendorId ? { vendor_id: vendorId } : {}
+    });
 
     const res = response.data;
 
-    // ✅ your API returns { success: true, data: [...] }
-    if (res.success && Array.isArray(res.data)) return res.data;
+    // If API returns { success: true, data: [...] }
+    if (res?.success && Array.isArray(res?.data)) {
+      return res.data;
+    }
 
-    // fallback handles plain array too
-    if (Array.isArray(res)) return res;
+    // If API returns plain array
+    if (Array.isArray(res)) {
+      return res;
+    }
 
-    // fallback handles { results: [...] } pagination
-    if (Array.isArray(res.results)) return res.results;
+    // If paginated { results: [...] }
+    if (Array.isArray(res?.results)) {
+      return res.results;
+    }
 
     return [];
   } catch (error) {
-    return rejectWithValue(error.response?.data || error.message);
+    return rejectWithValue(error.response?.data?.message || error.response?.data || error.message || 'Failed to fetch vendor services');
   }
 });
 
@@ -38,9 +67,9 @@ export const createVendorService = createAsyncThunk('vendorService/create', asyn
 export const updateVendorService = createAsyncThunk('vendorService/update', async ({ id, data }, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.patch(`/vendor-services/${id}/`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data' // ✅ override axios default
-      }
+      // headers: {
+      //   'Content-Type': 'multipart/form-data' // ✅ override axios default
+      // }
     });
     return response.data;
   } catch (error) {

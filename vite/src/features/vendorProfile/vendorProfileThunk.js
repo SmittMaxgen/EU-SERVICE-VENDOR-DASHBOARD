@@ -27,21 +27,52 @@ export const fetchVendors = createAsyncThunk('vendor/fetchAll', async (_, { reje
 //   }
 // });
 
+// export const fetchVendorById = createAsyncThunk('vendor/fetchProfile', async (_, { rejectWithValue }) => {
+//   try {
+//     const token = localStorage.getItem('token');
+
+//     const response = await axiosInstance.get('/vendor/profile/', {
+//       headers: {
+//         Authorization: `Bearer ${token}`
+//       }
+//     });
+//     console.log('res:::>>>', response);
+//     return response.data;
+//   } catch (error) {
+//     console.log('error:::>>>', error);
+//     console.log('error:::>>>', error.code);
+//     if (error.code === 'ERR_BAD_REQUEST') {
+//       localStorage.clear();
+//     }
+//     console.log('error.response?.data:::>>>', error.response?.data);
+//     return rejectWithValue(error.response?.data || error.message);
+//   }
+// });
+
 export const fetchVendorById = createAsyncThunk('vendor/fetchProfile', async (_, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem('token');
+
+    if (!token) {
+      return rejectWithValue('No authentication token found');
+    }
 
     const response = await axiosInstance.get('/vendor/profile/', {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
+
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response?.data || error.message);
+    // If unauthorized, clear storage
+    if (error.response?.status === 401) {
+      localStorage.clear();
+    }
+
+    return rejectWithValue(error.response?.data?.message || error.response?.data || error.message || 'Something went wrong');
   }
 });
-
 // ─── Create Vendor ────────────────────────────────────────────────────────────
 export const createVendor = createAsyncThunk('vendor/create', async (vendorData, { rejectWithValue }) => {
   try {
