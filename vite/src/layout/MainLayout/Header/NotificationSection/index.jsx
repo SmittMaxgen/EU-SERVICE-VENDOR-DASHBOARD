@@ -199,6 +199,7 @@ import { clearBookingRequestMessages } from '../../../../features/bookingRequest
 
 // assets
 import { IconBell } from '@tabler/icons-react';
+import { selectSelectedVendor } from '../../../../features/vendorProfile/vendorProfileSelectors';
 
 // ─── Filter tabs ──────────────────────────────────────────────────────────────
 const STATUS_OPTIONS = [
@@ -224,7 +225,8 @@ export default function NotificationSection() {
 
   // ✅ Adjust path to match your auth slice
   const vendorId = useSelector((state) => state.auth.user?.vendor_id);
-
+  const vendorData = useSelector(selectSelectedVendor);
+  console.log('vendorData:::>>>', vendorData);
   const bookingRequests = useSelector(selectAllBookingRequests);
   const loading = useSelector(selectBookingRequestLoading);
 
@@ -237,10 +239,10 @@ export default function NotificationSection() {
   // ─── Fetch when panel opens OR category changes to booking_requests ─────────
   // Hits: GET /booking-requests/?vendor_id=15
   useEffect(() => {
-    // if (open && category === 'booking_requests' && vendorId) {
-    dispatch(fetchBookingRequests({ vendor_id: 13 }));
-    // }
-  }, [open, category, vendorId, dispatch]);
+    if (open && category === 'booking_requests' && vendorData) {
+      dispatch(fetchBookingRequests({ vendor_id: vendorData.data.id }));
+    }
+  }, [open, category, vendorData, dispatch]);
 
   // ─── Cleanup on unmount ────────────────────────────────────────────────────
   useEffect(() => {
