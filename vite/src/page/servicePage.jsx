@@ -31,7 +31,7 @@ import { selectAllServices, selectServiceLoading, selectServiceError, selectServ
 import { clearServiceMessages, setSelectedService, clearSelectedService } from '../features/services/serviceSlice';
 import { selectSelectedService } from '../features/services/serviceSelectors';
 import { fetchVendorById } from '../features/vendorProfile/vendorProfileThunk';
-import { selectSelectedVendor } from '../../features/vendorProfile/vendorProfileSelectors';
+import { selectSelectedVendor } from '../features/vendorProfile/vendorProfileSelectors';
 import { setSelectedVendor } from '../features/vendorProfile/vendorProfileSlice';
 
 // ─────────────────────────────────────────────────────────────────────────────
