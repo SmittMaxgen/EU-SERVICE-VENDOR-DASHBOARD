@@ -30,7 +30,7 @@ import { fetchServices, createService, updateService, deleteService } from '../f
 import { selectAllServices, selectServiceLoading, selectServiceError, selectServiceSuccess } from '../features/services/serviceSelectors';
 import { clearServiceMessages, setSelectedService, clearSelectedService } from '../features/services/serviceSlice';
 import { selectSelectedService } from '../features/services/serviceSelectors';
-import { fetchVendorById } from '../../features/vendorProfile/vendorProfileThunk';
+import { fetchVendorById } from '../features/vendorProfile/vendorProfileThunk';
 import { selectSelectedVendor } from '../../features/vendorProfile/vendorProfileSelectors';
 import { setSelectedVendor } from '../features/vendorProfile/vendorProfileSlice';
 
