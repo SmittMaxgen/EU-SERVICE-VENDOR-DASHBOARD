@@ -20,6 +20,7 @@ const ServicesPage = Loadable(lazy(() => import('../page/servicePage')));
 const VendorServicesPage = Loadable(lazy(() => import('../page/vendorServicePage')));
 const VendorProfilePage = Loadable(lazy(() => import('../page/VendorProfilePage')));
 const SubCategoryPage = Loadable(lazy(() => import('../page/SubCategoriesPage')));
+const NotificationPage = Loadable(lazy(() => import('../page/notification/Notifications')));
 
 const MainRoutes = {
   path: '/',
@@ -97,6 +98,10 @@ const MainRoutes = {
     {
       path: 'subcategory/:id', // /subcategory/1
       element: <SubCategoryPage />
+    },
+    {
+      path: 'notifications/:id', // /subcategory/1
+      element: <NotificationPage />
     }
   ]
 };
