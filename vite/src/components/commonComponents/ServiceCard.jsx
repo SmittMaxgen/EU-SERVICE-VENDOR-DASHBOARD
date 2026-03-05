@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -23,6 +23,11 @@ import PercentIcon from '@mui/icons-material/Percent';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
+import { createVendorService } from '../../features/vendorService/vendorServiceThunk';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchVendorById } from '../../features/vendorProfile/vendorProfileThunk';
+import { selectSelectedVendor } from '../../features/vendorProfile/vendorProfileSelectors';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Skeleton Loader
@@ -49,10 +54,18 @@ const ServiceCardSkeleton = () => (
 // ─────────────────────────────────────────────────────────────────────────────
 export default function ServiceCard({ service, isLoading, onClick, onAdd, onEdit, onDelete }) {
   const theme = useTheme();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const dispatch = useDispatch();
+  console.log('service::::', service);
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openManu, setOpenManu] = React.useState(false);
+  console.log(openManu);
+  const vendorData = useSelector(selectSelectedVendor);
+  console.log('vendorData:::>>>', vendorData);
   const handleMenuOpen = (e) => {
     e.stopPropagation(); // prevent card click
+    setOpenManu(true);
+    // dispatch(fetchVendorById());
     setAnchorEl(e.currentTarget);
   };
 
@@ -64,15 +77,30 @@ export default function ServiceCard({ service, isLoading, onClick, onAdd, onEdit
   };
 
   const handleAdd = () => {
-    handleMenuClose();
-    onAdd?.(service);
+    const payload = {
+      vendor_id: vendorData?.data?.id || null,
+      service_id: [service?.id] || null,
+      custom_price: 120
+    };
+    // handleMenuClose();
+    // onAdd?.(service);
+    if (payload.service_id && payload.vendor_id && payload.custom_price) {
+      dispatch(createVendorService(payload));
+    } else {
+      alert('Something missing while adding service in vendor service !');
+    }
   };
 
   const handleDelete = () => {
     handleMenuClose();
     onDelete?.(service.id);
   };
-
+  // useEffect(() => {
+  //   if (openManu) {
+  //     console.log('anchorEl::>>>', anchorEl);
+  //     dispatch(fetchVendorById());
+  //   }
+  // }, [openManu]);
   if (isLoading) return <ServiceCardSkeleton />;
 
   return (
@@ -177,7 +205,12 @@ export default function ServiceCard({ service, isLoading, onClick, onAdd, onEdit
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          <MenuItem onClick={handleAdd}>
+          <MenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAdd();
+            }}
+          >
             <EditOutlinedIcon sx={{ mr: 1.75, fontSize: '1rem' }} /> Add Service
           </MenuItem>
           {/* <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>

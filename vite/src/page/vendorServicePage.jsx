@@ -388,11 +388,11 @@ export default function VendorServicesPage() {
     <Box>
       <MainCard
         title="Vendor Services"
-        secondary={
-          <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleOpenCreate}>
-            Add Vendor Service
-          </Button>
-        }
+        // secondary={
+        //   <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleOpenCreate}>
+        //     Add Vendor Service
+        //   </Button>
+        // }
       >
         <TextField
           fullWidth

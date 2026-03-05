@@ -45,6 +45,8 @@ import { clearVendorServiceMessages } from '../../../features/vendorService/vend
 // redux — service
 import { fetchServices } from '../../../features/services/serviceThunk';
 import { selectAllServices, selectServiceLoading } from '../../../features/services/serviceSelectors';
+import { selectSelectedVendor } from '../../../features/vendorProfile/vendorProfileSelectors';
+import { fetchVendorById } from '../../../features/vendorProfile/vendorProfileThunk';
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -59,6 +61,7 @@ export default function Dashboard() {
   const vendorError = useSelector(selectVendorServiceError);
   const services = useSelector(selectAllServices);
   const servicesLoading = useSelector(selectServiceLoading);
+  const vendorData = useSelector(selectSelectedVendor);
 
   // ── Dialog state ───────────────────────────────────────────────────────────
   const [detailOpen, setDetailOpen] = useState(false);
@@ -71,6 +74,8 @@ export default function Dashboard() {
   useEffect(() => {
     dispatch(fetchVendorServices());
     dispatch(fetchServices());
+    dispatch(fetchVendorById());
+
     setLoading(false);
   }, [dispatch]);
 
@@ -178,6 +183,7 @@ export default function Dashboard() {
           {(servicesLoading ? [1, 2, 3] : services.slice(0, 3)).map((service, i) => (
             <Grid key={servicesLoading ? i : service.id} size={{ xs: 12, sm: 6, md: 4 }}>
               <ServiceCard
+                vendor={vendorData}
                 isLoading={servicesLoading}
                 service={servicesLoading ? null : service}
                 onClick={() => navigate(`/subcategory/${service?.id}`)}

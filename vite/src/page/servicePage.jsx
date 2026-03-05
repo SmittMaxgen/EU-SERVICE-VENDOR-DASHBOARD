@@ -30,6 +30,9 @@ import { fetchServices, createService, updateService, deleteService } from '../f
 import { selectAllServices, selectServiceLoading, selectServiceError, selectServiceSuccess } from '../features/services/serviceSelectors';
 import { clearServiceMessages, setSelectedService, clearSelectedService } from '../features/services/serviceSlice';
 import { selectSelectedService } from '../features/services/serviceSelectors';
+import { fetchVendorById } from '../../features/vendorProfile/vendorProfileThunk';
+import { selectSelectedVendor } from '../../features/vendorProfile/vendorProfileSelectors';
+import { setSelectedVendor } from '../features/vendorProfile/vendorProfileSlice';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Empty Form State
@@ -59,6 +62,7 @@ export default function ServicesPage() {
   const error = useSelector(selectServiceError);
   const success = useSelector(selectServiceSuccess);
   const selectedService = useSelector(selectSelectedService);
+  const vendorData = useSelector(setSelectedVendor);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -71,7 +75,9 @@ export default function ServicesPage() {
   useEffect(() => {
     dispatch(fetchServices());
   }, [dispatch]);
-
+  useEffect(() => {
+    dispatch(fetchVendorById());
+  }, []);
   // ─── Handle success/error snackbar ───────────────────────────────────────
   useEffect(() => {
     if (success) {
@@ -205,6 +211,7 @@ export default function ServicesPage() {
                 <Grid key={service.id} item xs={12} sm={6} md={4}>
                   <ServiceCard
                     service={service}
+                    // vendor={fetchVendorById}
                     onClick={() => handleCardClick(service)}
                     onEdit={handleOpenEdit}
                     onDelete={handleDelete}

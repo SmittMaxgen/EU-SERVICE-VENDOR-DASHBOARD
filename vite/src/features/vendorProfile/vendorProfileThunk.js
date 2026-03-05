@@ -66,9 +66,9 @@ export const fetchVendorById = createAsyncThunk('vendor/fetchProfile', async (_,
     return response.data;
   } catch (error) {
     // If unauthorized, clear storage
-    if (error.response?.status === 401) {
-      localStorage.clear();
-    }
+    localStorage.clear();
+    // if (error.response?.status === 401) {
+    // }
 
     return rejectWithValue(error.response?.data?.message || error.response?.data || error.message || 'Something went wrong');
   }
