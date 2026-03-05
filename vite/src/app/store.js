@@ -4,6 +4,7 @@ import vendorServiceReducer from '../features/vendorService/vendorServiceSlice';
 import authReducer from '../features/auth/authSlice';
 import vendorReducer from '../features/vendorProfile/vendorProfileSlice';
 import documentReducer from '../features/vendorDocument/vendorDocumentSlice';
+import bookingRequestReducer from '../features/bookingRequest/bookingRequestSlice';
 
 const Store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ const Store = configureStore({
     vendorService: vendorServiceReducer,
     auth: authReducer,
     vendor: vendorReducer,
-    vendorDocument: documentReducer
+    vendorDocument: documentReducer,
+    bookingRequest: bookingRequestReducer
   }
 });
 
