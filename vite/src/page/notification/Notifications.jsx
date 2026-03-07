@@ -778,7 +778,6 @@ function NotificationDetail({ request, onUpdateStatus, updating }) {
 }
 
 // ==============================|| NOTIFICATIONS PAGE ||============================== //
-
 export default function Notifications() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -792,22 +791,6 @@ export default function Notifications() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedId, setSelectedId] = useState(id ? Number(id) : null);
   const [updating, setUpdating] = useState(false);
-
-  useEffect(() => {
-    dispatch(fetchBookingRequests());
-    return () => dispatch(clearBookingRequestMessages());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (id) setSelectedId(Number(id));
-  }, [id]);
-
-  useEffect(() => {
-    if (successMessage) {
-      setUpdating(false);
-      dispatch(clearBookingRequestMessages());
-    }
-  }, [successMessage, dispatch]);
 
   const filteredRequests = statusFilter === 'all' ? bookingRequests : bookingRequests.filter((r) => r.request_status === statusFilter);
 
@@ -826,7 +809,24 @@ export default function Notifications() {
   const countFor = (val) => (val === 'all' ? bookingRequests.length : bookingRequests.filter((r) => r.request_status === val).length);
 
   const pendingCount = countFor('sent');
+  useEffect(() => {
+    // dispatch(fetchBookingRequests());
+    if (selectedRequest) {
+      dispatch(fetchBookingRequests({ vendor_id: selectedRequest?.vendor_id }));
+    }
+    return () => dispatch(clearBookingRequestMessages());
+  }, [dispatch]);
 
+  useEffect(() => {
+    if (id) setSelectedId(Number(id));
+  }, [id]);
+
+  useEffect(() => {
+    if (successMessage) {
+      setUpdating(false);
+      dispatch(clearBookingRequestMessages());
+    }
+  }, [successMessage, dispatch]);
   return (
     <MainCard
       title={
