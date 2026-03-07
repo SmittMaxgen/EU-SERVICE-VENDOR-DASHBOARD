@@ -804,8 +804,7 @@ export default function Notifications() {
     setUpdating(true);
     dispatch(updateBookingRequest({ id: reqId, data: { request_status: newStatus } }));
   };
-  const handleRefresh = () => dispatch(fetchBookingRequests());
-
+  const handleRefresh = () => selectedRequest && dispatch(fetchBookingRequests({ vendor_id: selectedRequest?.vendor_id }));
   const countFor = (val) => (val === 'all' ? bookingRequests.length : bookingRequests.filter((r) => r.request_status === val).length);
 
   const pendingCount = countFor('sent');
